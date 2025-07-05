@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: AuraMan
+## Notes: Tracks cooldowns for all class abilities and shows notifications when they're ready
+## Author: Paul
+## Version: 1.0
+## SavedVariables: AuraManDB
+
+localization.lua
+main.lua
