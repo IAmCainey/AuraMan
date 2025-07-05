@@ -21,6 +21,29 @@ if not AuraManDB then
         iconsPerRow = 5,
         showText = true,
     }
+else
+    -- Ensure all required fields exist with safe defaults
+    if type(AuraManDB.hudScale) ~= "number" or AuraManDB.hudScale <= 0 or AuraManDB.hudScale > 3 then
+        AuraManDB.hudScale = 1.0
+    end
+    if type(AuraManDB.hudX) ~= "number" then
+        AuraManDB.hudX = 0
+    end
+    if type(AuraManDB.hudY) ~= "number" then
+        AuraManDB.hudY = 0
+    end
+    if type(AuraManDB.iconSize) ~= "number" or AuraManDB.iconSize < 20 or AuraManDB.iconSize > 100 then
+        AuraManDB.iconSize = 40
+    end
+    if type(AuraManDB.iconsPerRow) ~= "number" or AuraManDB.iconsPerRow < 1 or AuraManDB.iconsPerRow > 10 then
+        AuraManDB.iconsPerRow = 5
+    end
+    if AuraManDB.enabled == nil then
+        AuraManDB.enabled = true
+    end
+    if AuraManDB.showText == nil then
+        AuraManDB.showText = true
+    end
 end
 
 -- Class abilities to track (Classic WoW spell IDs and names)
@@ -427,7 +450,15 @@ function AuraMan:CreateHUDFrame()
     self.hudFrame:SetWidth(300)
     self.hudFrame:SetHeight(200)
     self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", AuraManDB.hudX, AuraManDB.hudY)
-    self.hudFrame:SetScale(AuraManDB.hudScale)
+    
+    -- Safe scale setting
+    local scale = AuraManDB.hudScale
+    if type(scale) == "number" and scale > 0 and scale <= 3 then
+        self.hudFrame:SetScale(scale)
+    else
+        self.hudFrame:SetScale(1.0)
+        AuraManDB.hudScale = 1.0
+    end
     
     -- Make it movable
     self.hudFrame:SetMovable(true)
@@ -706,7 +737,13 @@ function AuraMan:RegisterSlashCommands()
                 AuraManDB.hudScale = 1.0
             end
             if AuraMan.hudFrame then
-                AuraMan.hudFrame:SetScale(AuraManDB.hudScale)
+                local scale = AuraManDB.hudScale
+                if type(scale) == "number" and scale > 0 and scale <= 3 then
+                    AuraMan.hudFrame:SetScale(scale)
+                else
+                    AuraMan.hudFrame:SetScale(1.0)
+                    AuraManDB.hudScale = 1.0
+                end
             end
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Scale set to " .. AuraManDB.hudScale)
         elseif command == "hide" then
