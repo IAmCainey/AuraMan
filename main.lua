@@ -20,6 +20,7 @@ if not AuraManDB then
         iconSize = 40,
         iconsPerRow = 5,
         showText = true,
+        hudOpacity = 0.3,
     }
 else
     -- Ensure all required fields exist with safe defaults
@@ -43,6 +44,9 @@ else
     end
     if AuraManDB.showText == nil then
         AuraManDB.showText = true
+    end
+    if type(AuraManDB.hudOpacity) ~= "number" or AuraManDB.hudOpacity < 0 or AuraManDB.hudOpacity > 1 then
+        AuraManDB.hudOpacity = 0.3
     end
 end
 
@@ -506,9 +510,9 @@ function AuraMan:CreateHUDFrame()
     end)
     
     -- Background (semi-transparent)
-    local bg = self.hudFrame:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture(0, 0, 0, 0.3)
+    self.hudFrame.bg = self.hudFrame:CreateTexture(nil, "BACKGROUND")
+    self.hudFrame.bg:SetAllPoints()
+    self.hudFrame.bg:SetTexture(0, 0, 0, AuraManDB.hudOpacity)
     
     -- Title text
     self.hudFrame.title = self.hudFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -808,6 +812,22 @@ function AuraMan:RegisterSlashCommands()
                 end
             end
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Scale set to " .. AuraManDB.hudScale)
+        elseif command == "opacity" then
+            -- Toggle between opacity levels
+            if AuraManDB.hudOpacity == 0.3 then
+                AuraManDB.hudOpacity = 0.5
+            elseif AuraManDB.hudOpacity == 0.5 then
+                AuraManDB.hudOpacity = 0.7
+            elseif AuraManDB.hudOpacity == 0.7 then
+                AuraManDB.hudOpacity = 0.0
+            else
+                AuraManDB.hudOpacity = 0.3
+            end
+            if AuraMan.hudFrame and AuraMan.hudFrame.bg then
+                AuraMan.hudFrame.bg:SetTexture(0, 0, 0, AuraManDB.hudOpacity)
+            end
+            local opacityPercent = math.floor(AuraManDB.hudOpacity * 100)
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Background opacity set to " .. opacityPercent .. "%")
         elseif command == "hide" then
             if AuraMan.hudFrame and AuraMan.hudFrame:IsShown() then
                 AuraMan.hudFrame:Hide()
@@ -824,6 +844,7 @@ function AuraMan:RegisterSlashCommands()
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraMan:GetLocalizedText("SLASH_RESET") .. "|r")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraMan:GetLocalizedText("SLASH_LIST") .. "|r")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman scale|r - Change HUD scale")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman opacity|r - Change background opacity")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman hide|r - Toggle HUD visibility")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00Shift+drag|r - Move HUD")
         end
