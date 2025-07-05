@@ -521,7 +521,9 @@ function AuraMan:CreateCooldownIcons()
     
     -- Create frames for each ability
     for spellName, spellData in pairs(CLASS_ABILITIES[class]) do
-        local frame = CreateFrame("Frame", "AuraManCooldown_" .. spellName, self.hudFrame)
+        -- Sanitize frame name by removing spaces and special characters
+        local frameName = "AuraManCooldown_" .. string.gsub(spellName, "[%s%p]", "")
+        local frame = CreateFrame("Frame", frameName, self.hudFrame)
         frame:SetWidth(iconSize)
         frame:SetHeight(iconSize + 15) -- Extra space for text
         
