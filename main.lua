@@ -703,15 +703,19 @@ function AuraMan:RegisterSlashCommands()
             else
                 AuraManDB.hudScale = 1.0
             end
-            self.hudFrame:SetScale(AuraManDB.hudScale)
+            if self.hudFrame then
+                self.hudFrame:SetScale(AuraManDB.hudScale)
+            end
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Scale set to " .. AuraManDB.hudScale)
         elseif command == "hide" then
-            if self.hudFrame:IsShown() then
+            if self.hudFrame and self.hudFrame:IsShown() then
                 self.hudFrame:Hide()
                 DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD hidden")
-            else
+            elseif self.hudFrame then
                 self.hudFrame:Show()
                 DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD shown")
+            else
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD not initialized yet")
             end
         else
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraManGetText("SLASH_HELP") .. "|r")
