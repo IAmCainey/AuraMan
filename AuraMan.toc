@@ -1,8 +1,8 @@
 ## Interface: 11200
 ## Title: AuraMan
-## Notes: Tracks cooldowns for all class abilities and shows notifications when they're ready
+## Notes: Multi-class cooldown tracker with clickable HUD icons and comprehensive configuration options
 ## Author: IAmCainey
-## Version: 1.6
+## Version: 1.7
 ## SavedVariables: AuraManDB
 
 localization.lua
