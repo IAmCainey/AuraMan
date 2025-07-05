@@ -215,3 +215,4 @@ Free to use and modify. Created for the Classic WoW community.
 ![Screenshot From 2025-07-05 11-56-37](https://github.com/user-attachments/assets/894e8e5a-7988-4c6f-991a-af7903420647)
 ![Screenshot From 2025-07-05 11-56-22](https://github.com/user-attachments/assets/ddf864db-cd44-4fd9-b6b3-4bf9d09901c9)
 ![Screenshot From 2025-07-05 12-07-53](https://github.com/user-attachments/assets/e40eede3-ee85-43b0-87a0-d35740e2bd05)
+![Screenshot From 2025-07-05 17-22-27](https://github.com/user-attachments/assets/5889e43f-d937-413b-93bc-13d01d0ab357)
