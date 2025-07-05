@@ -809,6 +809,14 @@ function AuraMan:RegisterSlashCommands()
                 AuraManDB.hudScale = 1.0
             end
             if AuraMan.hudFrame then
+                -- Store current screen position before scaling
+                local x, y = AuraMan.hudFrame:GetCenter()
+                local screenWidth = UIParent:GetWidth()
+                local screenHeight = UIParent:GetHeight()
+                local offsetX = x - screenWidth/2
+                local offsetY = y - screenHeight/2
+                
+                -- Apply the new scale
                 local scale = AuraManDB.hudScale
                 if type(scale) == "number" and scale > 0 and scale <= 3 then
                     AuraMan.hudFrame:SetScale(scale)
@@ -816,6 +824,14 @@ function AuraMan:RegisterSlashCommands()
                     AuraMan.hudFrame:SetScale(1.0)
                     AuraManDB.hudScale = 1.0
                 end
+                
+                -- Restore position after scaling
+                AuraMan.hudFrame:ClearAllPoints()
+                AuraMan.hudFrame:SetPoint("CENTER", UIParent, "CENTER", offsetX, offsetY)
+                
+                -- Update saved position
+                AuraManDB.hudX = offsetX
+                AuraManDB.hudY = offsetY
             end
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Scale set to " .. AuraManDB.hudScale)
         elseif command == "opacity" then

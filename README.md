@@ -148,6 +148,10 @@ Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
 
+### Version 1.3
+- Fixed HUD position drift when scaling - HUD now maintains its screen position when changing scale sizes
+- Improved scaling behavior for better user experience
+
 ### Version 1.2
 - Added Challenging Shout to warrior abilities (10 minute cooldown)
 - Enhanced warrior class support with additional tanking ability tracking
