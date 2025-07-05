@@ -54,6 +54,7 @@ Tracks important cooldowns for all Classic WoW classes:
 - Only learned abilities are displayed (unlearned abilities are hidden)
 - Right-click the HUD to access the configuration panel
 
+
 ### Commands
 
 | Command | Description |
@@ -153,15 +154,6 @@ This addon is designed for Classic WoW 1.12.1. When adding new features or abili
 Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
-
-### Version 1.7
-- **Clickable HUD Icons**: HUD icons are now fully interactive
-  - Left-click to cast spells/abilities instantly
-  - Shift+Left-click to open spellbook to the spell's page
-  - Right-click to show spell information (cooldown duration, etc.)
-- Enhanced user experience with direct spell casting from the HUD
-- Improved accessibility by allowing quick access to spellbook entries
-- Smart conflict resolution with existing HUD right-click configuration menu
 
 ### Version 1.6
 - **Expanded Ability Coverage**: Added 30+ missing important abilities across all classes
