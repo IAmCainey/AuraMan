@@ -447,9 +447,15 @@ end
 -- Create notification frame
 function AuraMan:CreateHUDFrame()
     self.hudFrame = CreateFrame("Frame", "AuraManHUDFrame", UIParent)
+    
+    -- Safe initial sizing
     self.hudFrame:SetWidth(300)
     self.hudFrame:SetHeight(200)
-    self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", AuraManDB.hudX, AuraManDB.hudY)
+    
+    -- Safe positioning
+    local hudX = type(AuraManDB.hudX) == "number" and AuraManDB.hudX or 0
+    local hudY = type(AuraManDB.hudY) == "number" and AuraManDB.hudY or 0
+    self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", hudX, hudY)
     
     -- Safe scale setting
     local scale = AuraManDB.hudScale
@@ -516,6 +522,16 @@ function AuraMan:CreateCooldownIcons()
     local startX = 10
     local startY = -30
     
+    -- Safety checks for sizing values
+    if type(iconSize) ~= "number" or iconSize < 20 or iconSize > 100 then
+        iconSize = 40
+        AuraManDB.iconSize = 40
+    end
+    if type(iconsPerRow) ~= "number" or iconsPerRow < 1 or iconsPerRow > 10 then
+        iconsPerRow = 5
+        AuraManDB.iconsPerRow = 5
+    end
+    
     local row = 0
     local col = 0
     
@@ -524,8 +540,15 @@ function AuraMan:CreateCooldownIcons()
         -- Sanitize frame name by removing spaces and special characters
         local frameName = "AuraManCooldown_" .. string.gsub(spellName, "[%s%p]", "")
         local frame = CreateFrame("Frame", frameName, self.hudFrame)
-        frame:SetWidth(iconSize)
-        frame:SetHeight(iconSize + 15) -- Extra space for text
+        
+        -- Safe frame sizing
+        if type(iconSize) == "number" and iconSize > 0 then
+            frame:SetWidth(iconSize)
+            frame:SetHeight(iconSize + 15) -- Extra space for text
+        else
+            frame:SetWidth(40)
+            frame:SetHeight(55)
+        end
         
         -- Position the frame
         local x = startX + (col * (iconSize + spacing))
@@ -534,8 +557,13 @@ function AuraMan:CreateCooldownIcons()
         
         -- Icon
         frame.icon = frame:CreateTexture(nil, "ARTWORK")
-        frame.icon:SetWidth(iconSize)
-        frame.icon:SetHeight(iconSize)
+        if type(iconSize) == "number" and iconSize > 0 then
+            frame.icon:SetWidth(iconSize)
+            frame.icon:SetHeight(iconSize)
+        else
+            frame.icon:SetWidth(40)
+            frame.icon:SetHeight(40)
+        end
         frame.icon:SetPoint("TOP", frame, "TOP", 0, 0)
         frame.icon:SetTexture(spellData.icon)
         
@@ -550,7 +578,10 @@ function AuraMan:CreateCooldownIcons()
         frame.nameText:SetPoint("CENTER", frame.icon, "CENTER", 0, 0)
         frame.nameText:SetTextColor(1, 1, 1)
         frame.nameText:SetText("")
-        frame.nameText:SetFont("Fonts\\FRIZQT__.TTF", 8)
+        -- Safe font setting
+        if frame.nameText.SetFont then
+            frame.nameText:SetFont("Fonts\\FRIZQT__.TTF", 8)
+        end
         
         -- Gray overlay for when on cooldown
         frame.grayOverlay = frame:CreateTexture(nil, "OVERLAY")
@@ -576,8 +607,18 @@ function AuraMan:CreateCooldownIcons()
     local totalRows = math.ceil(self:CountTable(self.cooldownFrames) / iconsPerRow)
     local newHeight = 50 + (totalRows * (iconSize + spacing + 15))
     local newWidth = 20 + (iconsPerRow * (iconSize + spacing))
-    self.hudFrame:SetWidth(newWidth)
-    self.hudFrame:SetHeight(newHeight)
+    
+    -- Safe HUD frame sizing
+    if type(newWidth) == "number" and newWidth > 0 and newWidth < 2000 then
+        self.hudFrame:SetWidth(newWidth)
+    else
+        self.hudFrame:SetWidth(300)
+    end
+    if type(newHeight) == "number" and newHeight > 0 and newHeight < 2000 then
+        self.hudFrame:SetHeight(newHeight)
+    else
+        self.hudFrame:SetHeight(200)
+    end
 end
 
 -- Event handler
