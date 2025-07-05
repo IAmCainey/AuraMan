@@ -156,3 +156,5 @@ Free to use and modify. Created for the Classic WoW community.
 ---
 
 *AuraMan - Track your cooldowns, master your class!*
+
+![Screenshot From 2025-07-05 10-57-50](https://github.com/user-attachments/assets/6dffb861-c79b-4a18-819d-44a86af1e9b4)
