@@ -1,6 +1,6 @@
--- AuraMan - Multi-Class Cooldown Tracker v1.4
+-- AuraMan - Multi-Class Cooldown Tracker v1.5
 -- Classic WoW Addon for Turtle WoW (1.12.1)
--- Enhanced scaling with smart bounds checking
+-- Enhanced scaling with smart bounds checking and configuration UI
 
 local AuraMan = {}
 AuraMan.frame = nil
@@ -532,35 +532,48 @@ function AuraMan:CreateHUDFrame()
         end
     end)
     self.hudFrame:SetScript("OnMouseUp", function()
-        this:StopMovingOrSizing()
-        local x, y = this:GetCenter()
-        local screenWidth = UIParent:GetWidth()
-        local screenHeight = UIParent:GetHeight()
-        local offsetX = x - screenWidth/2
-        local offsetY = y - screenHeight/2
-        
-        -- Calculate screen bounds considering the current scale
-        local scale = this:GetScale()
-        local frameWidth = this:GetWidth() * scale
-        local frameHeight = this:GetHeight() * scale
-        local minX = -screenWidth/2 + frameWidth/2
-        local maxX = screenWidth/2 - frameWidth/2
-        local minY = -screenHeight/2 + frameHeight/2
-        local maxY = screenHeight/2 - frameHeight/2
-        
-        -- Clamp position to screen bounds
-        local clampedX = math.max(minX, math.min(maxX, offsetX))
-        local clampedY = math.max(minY, math.min(maxY, offsetY))
-        
-        -- If position was adjusted, apply it
-        if clampedX ~= offsetX or clampedY ~= offsetY then
-            this:ClearAllPoints()
-            this:SetPoint("CENTER", UIParent, "CENTER", clampedX, clampedY)
+        if arg1 == "RightButton" then
+            -- Right-click opens config menu
+            if AuraMan.configFrame then
+                if AuraMan.configFrame:IsShown() then
+                    AuraMan.configFrame:Hide()
+                else
+                    AuraMan:UpdateConfigFrame()
+                    AuraMan.configFrame:Show()
+                end
+            end
+        else
+            -- Left-click drag handling
+            this:StopMovingOrSizing()
+            local x, y = this:GetCenter()
+            local screenWidth = UIParent:GetWidth()
+            local screenHeight = UIParent:GetHeight()
+            local offsetX = x - screenWidth/2
+            local offsetY = y - screenHeight/2
+            
+            -- Calculate screen bounds considering the current scale
+            local scale = this:GetScale()
+            local frameWidth = this:GetWidth() * scale
+            local frameHeight = this:GetHeight() * scale
+            local minX = -screenWidth/2 + frameWidth/2
+            local maxX = screenWidth/2 - frameWidth/2
+            local minY = -screenHeight/2 + frameHeight/2
+            local maxY = screenHeight/2 - frameHeight/2
+            
+            -- Clamp position to screen bounds
+            local clampedX = math.max(minX, math.min(maxX, offsetX))
+            local clampedY = math.max(minY, math.min(maxY, offsetY))
+            
+            -- If position was adjusted, apply it
+            if clampedX ~= offsetX or clampedY ~= offsetY then
+                this:ClearAllPoints()
+                this:SetPoint("CENTER", UIParent, "CENTER", clampedX, clampedY)
+            end
+            
+            -- Save the clamped position
+            AuraManDB.hudX = clampedX
+            AuraManDB.hudY = clampedY
         end
-        
-        -- Save the clamped position
-        AuraManDB.hudX = clampedX
-        AuraManDB.hudY = clampedY
     end)
     
     -- Background (semi-transparent)
@@ -579,6 +592,218 @@ function AuraMan:CreateHUDFrame()
     
     -- Create cooldown icon frames
     self:CreateCooldownIcons()
+end
+
+-- Create configuration UI
+function AuraMan:CreateConfigFrame()
+    if self.configFrame then
+        return
+    end
+    
+    -- Main config frame
+    self.configFrame = CreateFrame("Frame", "AuraManConfigFrame", UIParent)
+    self.configFrame:SetWidth(400)
+    self.configFrame:SetHeight(500)
+    self.configFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    self.configFrame:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        tile = true, tileSize = 32, edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    self.configFrame:SetBackdropColor(0, 0, 0, 0.8)
+    self.configFrame:SetMovable(true)
+    self.configFrame:EnableMouse(true)
+    self.configFrame:SetScript("OnMouseDown", function() this:StartMoving() end)
+    self.configFrame:SetScript("OnMouseUp", function() this:StopMovingOrSizing() end)
+    self.configFrame:Hide()
+    
+    -- Title
+    local title = self.configFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint("TOP", self.configFrame, "TOP", 0, -15)
+    title:SetText("AuraMan Configuration")
+    title:SetTextColor(1, 1, 0)
+    
+    -- Close button
+    local closeButton = CreateFrame("Button", nil, self.configFrame, "UIPanelButtonTemplate")
+    closeButton:SetWidth(80)
+    closeButton:SetHeight(22)
+    closeButton:SetPoint("TOPRIGHT", self.configFrame, "TOPRIGHT", -15, -15)
+    closeButton:SetText("Close")
+    closeButton:SetScript("OnClick", function() AuraMan.configFrame:Hide() end)
+    
+    -- Enable/Disable checkbox
+    local enabledCheckbox = CreateFrame("CheckButton", nil, self.configFrame, "UICheckButtonTemplate")
+    enabledCheckbox:SetPoint("TOPLEFT", self.configFrame, "TOPLEFT", 20, -50)
+    enabledCheckbox.text = enabledCheckbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    enabledCheckbox.text:SetPoint("LEFT", enabledCheckbox, "RIGHT", 5, 0)
+    enabledCheckbox.text:SetText("Enable AuraMan")
+    enabledCheckbox:SetScript("OnClick", function()
+        AuraManDB.enabled = not AuraManDB.enabled
+        AuraMan.enabled = AuraManDB.enabled
+        this:SetChecked(AuraManDB.enabled)
+        if AuraManDB.enabled then
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Enabled")
+        else
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Disabled")
+        end
+    end)
+    
+    -- Scale slider
+    local scaleSlider = CreateFrame("Slider", nil, self.configFrame, "OptionsSliderTemplate")
+    scaleSlider:SetPoint("TOPLEFT", self.configFrame, "TOPLEFT", 20, -90)
+    scaleSlider:SetWidth(200)
+    scaleSlider:SetHeight(20)
+    scaleSlider:SetMinMaxValues(0.5, 2.0)
+    scaleSlider:SetValue(AuraManDB.hudScale)
+    scaleSlider:SetValueStep(0.1)
+    scaleSlider.textLow = scaleSlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    scaleSlider.textLow:SetPoint("BOTTOMLEFT", scaleSlider, "BOTTOMLEFT", 0, -10)
+    scaleSlider.textLow:SetText("0.5x")
+    scaleSlider.textHigh = scaleSlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    scaleSlider.textHigh:SetPoint("BOTTOMRIGHT", scaleSlider, "BOTTOMRIGHT", 0, -10)
+    scaleSlider.textHigh:SetText("2.0x")
+    scaleSlider.title = scaleSlider:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    scaleSlider.title:SetPoint("TOPLEFT", scaleSlider, "TOPLEFT", 0, 15)
+    scaleSlider.title:SetText("HUD Scale: " .. AuraManDB.hudScale .. "x")
+    scaleSlider:SetScript("OnValueChanged", function()
+        local value = this:GetValue()
+        value = math.floor(value * 10) / 10 -- Round to 1 decimal place
+        AuraManDB.hudScale = value
+        this.title:SetText("HUD Scale: " .. value .. "x")
+        AuraMan:ApplyScale()
+    end)
+    
+    -- Opacity slider
+    local opacitySlider = CreateFrame("Slider", nil, self.configFrame, "OptionsSliderTemplate")
+    opacitySlider:SetPoint("TOPLEFT", self.configFrame, "TOPLEFT", 20, -150)
+    opacitySlider:SetWidth(200)
+    opacitySlider:SetHeight(20)
+    opacitySlider:SetMinMaxValues(0, 1)
+    opacitySlider:SetValue(AuraManDB.hudOpacity)
+    opacitySlider:SetValueStep(0.1)
+    opacitySlider.textLow = opacitySlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    opacitySlider.textLow:SetPoint("BOTTOMLEFT", opacitySlider, "BOTTOMLEFT", 0, -10)
+    opacitySlider.textLow:SetText("0%")
+    opacitySlider.textHigh = opacitySlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    opacitySlider.textHigh:SetPoint("BOTTOMRIGHT", opacitySlider, "BOTTOMRIGHT", 0, -10)
+    opacitySlider.textHigh:SetText("100%")
+    opacitySlider.title = opacitySlider:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    opacitySlider.title:SetPoint("TOPLEFT", opacitySlider, "TOPLEFT", 0, 15)
+    opacitySlider.title:SetText("Background Opacity: " .. math.floor(AuraManDB.hudOpacity * 100) .. "%")
+    opacitySlider:SetScript("OnValueChanged", function()
+        local value = this:GetValue()
+        value = math.floor(value * 10) / 10 -- Round to 1 decimal place
+        AuraManDB.hudOpacity = value
+        this.title:SetText("Background Opacity: " .. math.floor(value * 100) .. "%")
+        if AuraMan.hudFrame and AuraMan.hudFrame.bg then
+            AuraMan.hudFrame.bg:SetTexture(0, 0, 0, value)
+        end
+    end)
+    
+    -- Icon size slider
+    local iconSizeSlider = CreateFrame("Slider", nil, self.configFrame, "OptionsSliderTemplate")
+    iconSizeSlider:SetPoint("TOPLEFT", self.configFrame, "TOPLEFT", 20, -210)
+    iconSizeSlider:SetWidth(200)
+    iconSizeSlider:SetHeight(20)
+    iconSizeSlider:SetMinMaxValues(20, 80)
+    iconSizeSlider:SetValue(AuraManDB.iconSize)
+    iconSizeSlider:SetValueStep(5)
+    iconSizeSlider.textLow = iconSizeSlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    iconSizeSlider.textLow:SetPoint("BOTTOMLEFT", iconSizeSlider, "BOTTOMLEFT", 0, -10)
+    iconSizeSlider.textLow:SetText("20px")
+    iconSizeSlider.textHigh = iconSizeSlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    iconSizeSlider.textHigh:SetPoint("BOTTOMRIGHT", iconSizeSlider, "BOTTOMRIGHT", 0, -10)
+    iconSizeSlider.textHigh:SetText("80px")
+    iconSizeSlider.title = iconSizeSlider:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    iconSizeSlider.title:SetPoint("TOPLEFT", iconSizeSlider, "TOPLEFT", 0, 15)
+    iconSizeSlider.title:SetText("Icon Size: " .. AuraManDB.iconSize .. "px")
+    iconSizeSlider:SetScript("OnValueChanged", function()
+        local value = this:GetValue()
+        value = math.floor(value / 5) * 5 -- Round to nearest 5
+        AuraManDB.iconSize = value
+        this.title:SetText("Icon Size: " .. value .. "px")
+        AuraMan:CreateCooldownIcons()
+    end)
+    
+    -- Icons per row slider
+    local iconsPerRowSlider = CreateFrame("Slider", nil, self.configFrame, "OptionsSliderTemplate")
+    iconsPerRowSlider:SetPoint("TOPLEFT", self.configFrame, "TOPLEFT", 20, -270)
+    iconsPerRowSlider:SetWidth(200)
+    iconsPerRowSlider:SetHeight(20)
+    iconsPerRowSlider:SetMinMaxValues(1, 10)
+    iconsPerRowSlider:SetValue(AuraManDB.iconsPerRow)
+    iconsPerRowSlider:SetValueStep(1)
+    iconsPerRowSlider.textLow = iconsPerRowSlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    iconsPerRowSlider.textLow:SetPoint("BOTTOMLEFT", iconsPerRowSlider, "BOTTOMLEFT", 0, -10)
+    iconsPerRowSlider.textLow:SetText("1")
+    iconsPerRowSlider.textHigh = iconsPerRowSlider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    iconsPerRowSlider.textHigh:SetPoint("BOTTOMRIGHT", iconsPerRowSlider, "BOTTOMRIGHT", 0, -10)
+    iconsPerRowSlider.textHigh:SetText("10")
+    iconsPerRowSlider.title = iconsPerRowSlider:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    iconsPerRowSlider.title:SetPoint("TOPLEFT", iconsPerRowSlider, "TOPLEFT", 0, 15)
+    iconsPerRowSlider.title:SetText("Icons Per Row: " .. AuraManDB.iconsPerRow)
+    iconsPerRowSlider:SetScript("OnValueChanged", function()
+        local value = math.floor(this:GetValue())
+        AuraManDB.iconsPerRow = value
+        this.title:SetText("Icons Per Row: " .. value)
+        AuraMan:CreateCooldownIcons()
+    end)
+    
+    -- Action buttons
+    local resetButton = CreateFrame("Button", nil, self.configFrame, "UIPanelButtonTemplate")
+    resetButton:SetWidth(100)
+    resetButton:SetHeight(22)
+    resetButton:SetPoint("BOTTOMLEFT", self.configFrame, "BOTTOMLEFT", 20, 20)
+    resetButton:SetText("Reset Position")
+    resetButton:SetScript("OnClick", function()
+        AuraManDB.hudX = 0
+        AuraManDB.hudY = 0
+        if AuraMan.hudFrame then
+            AuraMan.hudFrame:ClearAllPoints()
+            AuraMan.hudFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        end
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Position reset to center")
+    end)
+    
+    local hideButton = CreateFrame("Button", nil, self.configFrame, "UIPanelButtonTemplate")
+    hideButton:SetWidth(100)
+    hideButton:SetHeight(22)
+    hideButton:SetPoint("BOTTOM", self.configFrame, "BOTTOM", 0, 20)
+    hideButton:SetText("Toggle HUD")
+    hideButton:SetScript("OnClick", function()
+        if AuraMan.hudFrame and AuraMan.hudFrame:IsShown() then
+            AuraMan.hudFrame:Hide()
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD hidden")
+        elseif AuraMan.hudFrame then
+            AuraMan.hudFrame:Show()
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD shown")
+        end
+    end)
+    
+    local listButton = CreateFrame("Button", nil, self.configFrame, "UIPanelButtonTemplate")
+    listButton:SetWidth(100)
+    listButton:SetHeight(22)
+    listButton:SetPoint("BOTTOMRIGHT", self.configFrame, "BOTTOMRIGHT", -20, 20)
+    listButton:SetText("List Abilities")
+    listButton:SetScript("OnClick", function()
+        AuraMan:ListTrackedAbilities()
+    end)
+    
+    -- Instructions
+    local instructions = self.configFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    instructions:SetPoint("TOPLEFT", self.configFrame, "TOPLEFT", 20, -330)
+    instructions:SetWidth(360)
+    instructions:SetJustifyH("LEFT")
+    instructions:SetText("• Hold Shift and drag the HUD to move it\n• Changes are applied immediately and saved automatically\n• Use the sliders to fine-tune your HUD appearance\n• The HUD will automatically stay within screen bounds")
+    instructions:SetTextColor(0.8, 0.8, 0.8)
+    
+    -- Store references for updates
+    self.configFrame.enabledCheckbox = enabledCheckbox
+    self.configFrame.scaleSlider = scaleSlider
+    self.configFrame.opacitySlider = opacitySlider
+    self.configFrame.iconSizeSlider = iconSizeSlider
+    self.configFrame.iconsPerRowSlider = iconsPerRowSlider
 end
 
 -- Create cooldown icon frames
@@ -715,6 +940,7 @@ end
 -- Initialize the addon
 function AuraMan:Initialize()
     self:CreateHUDFrame()
+    self:CreateConfigFrame()
     self:RegisterSlashCommands()
     self.enabled = AuraManDB.enabled
 end
@@ -930,11 +1156,23 @@ function AuraMan:RegisterSlashCommands()
             else
                 DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD not initialized yet")
             end
+        elseif command == "config" or command == "options" then
+            if AuraMan.configFrame then
+                if AuraMan.configFrame:IsShown() then
+                    AuraMan.configFrame:Hide()
+                else
+                    AuraMan:UpdateConfigFrame()
+                    AuraMan.configFrame:Show()
+                end
+            else
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Config frame not initialized yet")
+            end
         else
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraMan:GetLocalizedText("SLASH_HELP") .. "|r")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraMan:GetLocalizedText("SLASH_TOGGLE") .. "|r")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraMan:GetLocalizedText("SLASH_RESET") .. "|r")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraMan:GetLocalizedText("SLASH_LIST") .. "|r")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman config|r - Open configuration panel")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman scale|r - Change HUD scale")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman opacity|r - Change background opacity")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman hide|r - Toggle HUD visibility")

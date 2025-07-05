@@ -16,6 +16,7 @@ A comprehensive cooldown tracking addon for Classic World of Warcraft (1.12.1), 
 - **Adjustable Opacity**: Change background transparency (0%, 30%, 50%, 70%)
 - **Customizable Layout**: Adjust icon size and icons per row
 - **Hide/Show Toggle**: Quickly hide the HUD when not needed
+- **Configuration UI**: Easy-to-use settings panel with sliders and options
 
 ### 🔧 **Smart Configuration**
 - Automatic position and settings saving
@@ -51,12 +52,14 @@ Tracks important cooldowns for all Classic WoW classes:
 - Icons show green when abilities are ready
 - Icons turn gray with countdown timers when on cooldown
 - Only learned abilities are displayed (unlearned abilities are hidden)
+- Right-click the HUD to access the configuration panel
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
 | `/auraman` or `/am` | Show help and available commands |
+| `/auraman config` | Open the configuration panel with sliders and options |
 | `/auraman toggle` | Enable/disable the cooldown tracker |
 | `/auraman reset` | Reset HUD position to center of screen |
 | `/auraman scale` | Cycle through HUD scale sizes (1.0x → 0.8x → 0.5x → 1.2x) with smart positioning |
@@ -64,11 +67,13 @@ Tracks important cooldowns for all Classic WoW classes:
 | `/auraman hide` | Toggle HUD visibility |
 | `/auraman list` | List all tracked abilities and learning status |
 
-### Moving the HUD
-- Hold **Shift** and **left-click drag** the HUD to move it
-- Position is automatically saved when you release the mouse
-- The HUD is automatically kept within screen boundaries
-- Use `/auraman reset` to return to center if needed
+### Moving and Configuring the HUD
+- **Configuration Panel**: Use `/auraman config` or right-click the HUD to open the settings panel
+- **Visual Sliders**: Adjust scale, opacity, icon size, and icons per row with real-time preview
+- **Drag to Move**: Hold Shift and left-click drag the HUD to reposition it
+- **Smart Positioning**: The HUD automatically stays within screen boundaries
+- **Instant Apply**: All changes are applied immediately and saved automatically
+- **Reset Options**: Use `/auraman reset` to return to center if needed
 
 ## Configuration
 
@@ -148,6 +153,14 @@ This addon is designed for Classic WoW 1.12.1. When adding new features or abili
 Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
+
+### Version 1.5
+- **Configuration UI**: Added comprehensive settings panel with visual sliders and options
+- **Easy Access**: Right-click the HUD or use `/auraman config` to open settings
+- **Real-time Preview**: All changes are applied instantly as you adjust sliders
+- **Visual Controls**: Sliders for scale (0.5x-2.0x), opacity (0-100%), icon size (20-80px), and icons per row (1-10)
+- **Enhanced UX**: Configuration panel includes action buttons for common tasks
+- **Improved Commands**: New `/auraman config` command for quick access to settings
 
 ### Version 1.4
 - **Major Scaling Improvement**: HUD now properly maintains its position when scaling and never goes off-screen
