@@ -164,9 +164,9 @@ Free to use and modify. Created for the Classic WoW community.
   - Left-click to cast spells/abilities instantly
   - Shift+Left-click to open spellbook to the spell's page
   - Right-click to show spell information (cooldown duration, etc.)
-  - Enhanced user experience with direct spell casting from the HUD
-  - Improved accessibility by allowing quick access to spellbook entries
-  - Smart conflict resolution with existing HUD right-click configuration menu
+- Enhanced user experience with direct spell casting from the HUD
+- Improved accessibility by allowing quick access to spellbook entries
+- Smart conflict resolution with existing HUD right-click configuration menu
 
 ### Version 1.6
 - **Expanded Ability Coverage**: Added 30+ missing important abilities across all classes
