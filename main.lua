@@ -1,6 +1,6 @@
--- AuraMan - Multi-Class Cooldown Tracker v1.7
+-- AuraMan - Multi-Class Cooldown Tracker v1.6
 -- Classic WoW Addon for Turtle WoW (1.12.1)
--- Enhanced scaling with smart bounds checking, clickable HUD icons, and comprehensive configuration UI
+-- Enhanced scaling with smart bounds checking, configuration UI, and expanded ability coverage
 
 local AuraMan = {}
 AuraMan.frame = nil
@@ -1152,19 +1152,6 @@ function AuraMan:CreateCooldownIcons()
         frame.grayOverlay:SetTexture(0, 0, 0, 0.6)
         frame.grayOverlay:Hide()
         
-        -- Make the frame clickable
-        frame:EnableMouse(true)
-        frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        frame:SetScript("OnClick", function()
-            AuraMan:OnIconClick(this.spellName, this.spellData)
-        end)
-        frame:SetScript("OnEnter", function()
-            AuraMan:OnIconEnter(this.spellName, this.spellData)
-        end)
-        frame:SetScript("OnLeave", function()
-            AuraMan:OnIconLeave()
-        end)
-        
         -- Store spell data
         frame.spellName = spellName
         frame.spellData = spellData
@@ -1479,65 +1466,6 @@ function AuraMan:CountTable(t)
         count = count + 1
     end
     return count
-end
-
--- Handle HUD icon clicks
-function AuraMan:OnIconClick(spellName, spellData)
-    if not spellName or not spellData then
-        return
-    end
-    
-    -- Check if we have a valid spell index
-    if spellData.spellIndex then
-        -- Left click: Cast the spell
-        if arg1 == "LeftButton" then
-            -- Shift+Left click: Open spellbook to the spell
-            if IsShiftKeyDown() then
-                ToggleSpellBook(BOOKTYPE_SPELL)
-                -- Try to select the spell tab and highlight the spell
-                SpellBookFrame:Show()
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Opened spellbook for " .. spellName)
-            else
-                -- Regular left click: Cast the spell
-                local spellName, spellRank = GetSpellName(spellData.spellIndex, BOOKTYPE_SPELL)
-                if spellName then
-                    CastSpell(spellData.spellIndex, BOOKTYPE_SPELL)
-                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Casting " .. spellName)
-                end
-            end
-        -- Right click: Show spell info (or pass through to HUD handler)
-        elseif arg1 == "RightButton" then
-            -- For now, just show spell info
-            local cooldownText = spellData.cooldown and (spellData.cooldown .. " seconds") or "Unknown"
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. spellName .. " (Cooldown: " .. cooldownText .. ")")
-        end
-    else
-        -- Fallback: try to cast by name
-        if arg1 == "LeftButton" then
-            if IsShiftKeyDown() then
-                ToggleSpellBook(BOOKTYPE_SPELL)
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Opened spellbook for " .. spellName)
-            else
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Attempting to cast " .. spellName .. " (no spell index)")
-                -- This is a fallback - may not work in all cases
-                CastSpellByName(spellName)
-            end
-        elseif arg1 == "RightButton" then
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. spellName .. " (spell not found in spellbook)")
-        end
-    end
-end
-
--- Handle HUD icon mouse enter (for future tooltip functionality)
-function AuraMan:OnIconEnter(spellName, spellData)
-    -- Future: Show tooltip with spell information
-    -- For now, this is a placeholder
-end
-
--- Handle HUD icon mouse leave
-function AuraMan:OnIconLeave()
-    -- Future: Hide tooltip
-    -- For now, this is a placeholder
 end
 
 -- Initialize the addon

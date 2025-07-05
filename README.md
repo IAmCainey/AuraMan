@@ -1,6 +1,6 @@
 # AuraMan - Multi-Class Cooldown Tracker
 
-A comprehensive cooldown tracking addon for Classic World of Warcraft (1.12.1), specifically designed for Turtle WoW.## 
+A comprehensive cooldown tracking addon for Classic World of Warcraft (1.12.1), specifically designed for Turtle WoW. AuraMan provides a clean, persistent HUD that displays all your important class abilities and their cooldown statuses at a glance.
 
 ## Features
 
@@ -53,11 +53,6 @@ Tracks important cooldowns for all Classic WoW classes:
 - Icons turn gray with countdown timers when on cooldown
 - Only learned abilities are displayed (unlearned abilities are hidden)
 - Right-click the HUD to access the configuration panel
-
-### Interacting with Icons
-- **Left-click**: Cast the spell/ability instantly
-- **Shift+Left-click**: Open the spellbook to the spell's page
-- **Right-click**: Show spell information (cooldown duration, etc.)
 
 ### Commands
 
