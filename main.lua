@@ -806,6 +806,78 @@ function AuraMan:CreateConfigFrame()
     self.configFrame.iconsPerRowSlider = iconsPerRowSlider
 end
 
+-- Apply scale with bounds checking
+function AuraMan:ApplyScale()
+    if not self.hudFrame then return end
+    
+    local x, y = self.hudFrame:GetCenter()
+    local screenWidth = UIParent:GetWidth()
+    local screenHeight = UIParent:GetHeight()
+    local unscaledX = x - screenWidth/2
+    local unscaledY = y - screenHeight/2
+    
+    -- Apply the new scale
+    local newScale = AuraManDB.hudScale
+    if type(newScale) == "number" and newScale > 0 and newScale <= 3 then
+        self.hudFrame:SetScale(newScale)
+    else
+        self.hudFrame:SetScale(1.0)
+        AuraManDB.hudScale = 1.0
+        newScale = 1.0
+    end
+    
+    -- Calculate screen bounds considering the new scale
+    local frameWidth = self.hudFrame:GetWidth() * newScale
+    local frameHeight = self.hudFrame:GetHeight() * newScale
+    local minX = -screenWidth/2 + frameWidth/2
+    local maxX = screenWidth/2 - frameWidth/2
+    local minY = -screenHeight/2 + frameHeight/2
+    local maxY = screenHeight/2 - frameHeight/2
+    
+    -- Clamp position to screen bounds
+    local clampedX = math.max(minX, math.min(maxX, unscaledX))
+    local clampedY = math.max(minY, math.min(maxY, unscaledY))
+    
+    -- If the frame would go off-screen, center it
+    if clampedX ~= unscaledX or clampedY ~= unscaledY then
+        clampedX = 0
+        clampedY = 0
+    end
+    
+    -- Apply position
+    self.hudFrame:ClearAllPoints()
+    self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", clampedX, clampedY)
+    
+    -- Update saved position
+    AuraManDB.hudX = clampedX
+    AuraManDB.hudY = clampedY
+end
+
+-- Update config frame values
+function AuraMan:UpdateConfigFrame()
+    if not self.configFrame then return end
+    
+    if self.configFrame.enabledCheckbox then
+        self.configFrame.enabledCheckbox:SetChecked(AuraManDB.enabled)
+    end
+    if self.configFrame.scaleSlider then
+        self.configFrame.scaleSlider:SetValue(AuraManDB.hudScale)
+        self.configFrame.scaleSlider.title:SetText("HUD Scale: " .. AuraManDB.hudScale .. "x")
+    end
+    if self.configFrame.opacitySlider then
+        self.configFrame.opacitySlider:SetValue(AuraManDB.hudOpacity)
+        self.configFrame.opacitySlider.title:SetText("Background Opacity: " .. math.floor(AuraManDB.hudOpacity * 100) .. "%")
+    end
+    if self.configFrame.iconSizeSlider then
+        self.configFrame.iconSizeSlider:SetValue(AuraManDB.iconSize)
+        self.configFrame.iconSizeSlider.title:SetText("Icon Size: " .. AuraManDB.iconSize .. "px")
+    end
+    if self.configFrame.iconsPerRowSlider then
+        self.configFrame.iconsPerRowSlider:SetValue(AuraManDB.iconsPerRow)
+        self.configFrame.iconsPerRowSlider.title:SetText("Icons Per Row: " .. AuraManDB.iconsPerRow)
+    end
+end
+
 -- Create cooldown icon frames
 function AuraMan:CreateCooldownIcons()
     -- Clear existing frames
