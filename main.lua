@@ -535,8 +535,8 @@ function AuraMan:CreateCooldownIcons()
     local row = 0
     local col = 0
     
-    -- Create frames for each ability
-    for spellName, spellData in pairs(CLASS_ABILITIES[class]) do
+    -- Create frames only for learned abilities
+    for spellName, spellData in pairs(self.trackedSpells) do
         -- Sanitize frame name by removing spaces and special characters
         local frameName = "AuraManCooldown_" .. string.gsub(spellName, "[%s%p]", "")
         local frame = CreateFrame("Frame", frameName, self.hudFrame)
@@ -671,6 +671,7 @@ function AuraMan:UpdateTrackedSpells()
     end
     
     -- Update HUD icons
+    self:CreateCooldownIcons()
     self:UpdateHUDIcons()
 end
 
@@ -689,7 +690,7 @@ function AuraMan:UpdateHUDIcons()
         local spellData = self.trackedSpells[spellName]
         
         if spellData then
-            -- Spell is learned
+            -- Spell is learned (all frames are for learned spells now)
             local start, duration = GetSpellCooldown(spellData.spellIndex, BOOKTYPE_SPELL)
             
             if start and duration and duration > 0 then
@@ -714,12 +715,6 @@ function AuraMan:UpdateHUDIcons()
                 frame.cooldownText:SetTextColor(0, 1, 0) -- Green
                 frame.nameText:SetText("")
             end
-        else
-            -- Spell is not learned
-            frame.grayOverlay:Show()
-            frame.cooldownText:SetText("NOT LEARNED")
-            frame.cooldownText:SetTextColor(0.5, 0.5, 0.5) -- Gray
-            frame.nameText:SetText(string.sub(spellName, 1, 8)) -- Show abbreviated name
         end
     end
 end
@@ -825,12 +820,10 @@ function AuraMan:ListTrackedAbilities()
         DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00✓|r " .. spellName .. " (Priority: " .. spellData.priority .. ")")
     end
     
-    -- Show abilities that are available for the class but not learned
-    for spellName, spellData in pairs(CLASS_ABILITIES[class]) do
-        if not AuraMan.trackedSpells[spellName] then
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000✗|r " .. string.format(GetLocalizedText("ABILITY_NOT_LEARNED"), spellName))
-        end
-    end
+    -- Show total count of learned abilities
+    local learnedCount = AuraMan:CountTable(AuraMan.trackedSpells)
+    local totalCount = AuraMan:CountTable(CLASS_ABILITIES[class])
+    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. learnedCount .. " of " .. totalCount .. " class abilities learned")
 end
 
 -- Helper function to count table elements
