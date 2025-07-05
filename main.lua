@@ -152,6 +152,12 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\Ability_Warrior_Challange",
             priority = 4
         },
+        ["Challenging Shout"] = {
+            id = 1161,
+            cooldown = 600, -- 10 minutes
+            icon = "Interface\\Icons\\Ability_BullRush",
+            priority = 3
+        },
     },
     
     ["MAGE"] = {

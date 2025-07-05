@@ -27,7 +27,7 @@ A comprehensive cooldown tracking addon for Classic World of Warcraft (1.12.1), 
 Tracks important cooldowns for all Classic WoW classes:
 
 - **Rogue**: Stealth, Vanish, Kidney Shot, Cold Blood, Preparation, Evasion, Sprint, Blind, Thistle Tea
-- **Warrior**: Shield Wall, Last Stand, Bloodthirst, Whirlwind, Intimidating Shout, Recklessness, Retaliation
+- **Warrior**: Shield Wall, Last Stand, Bloodthirst, Whirlwind, Intimidating Shout, Recklessness, Retaliation, Challenging Shout
 - **Mage**: Counterspell, Blink, Ice Block, Presence of Mind, Evocation, Combustion, Cold Snap
 - **Priest**: Psychic Scream, Fade, Inner Fire, Power Word: Shield, Fear Ward, Desperate Prayer
 - **Paladin**: Lay on Hands, Divine Protection, Consecration, Hammer of Justice, Divine Favor, Forbearance
@@ -147,6 +147,10 @@ This addon is designed for Classic WoW 1.12.1. When adding new features or abili
 Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
+
+### Version 1.2
+- Added Challenging Shout to warrior abilities (10 minute cooldown)
+- Enhanced warrior class support with additional tanking ability tracking
 
 ### Version 1.1
 - Added 0.5x scale option for ultra-compact HUD
