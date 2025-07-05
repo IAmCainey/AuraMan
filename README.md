@@ -148,6 +148,14 @@ Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
 
+### Version 1.1
+- Added 0.5x scale option for ultra-compact HUD
+- Added adjustable background opacity (0%, 30%, 50%, 70%)
+- Enhanced slash commands with `/auraman opacity` 
+- Improved HUD customization options
+- Updated scale cycling: 1.0x → 0.8x → 0.5x → 1.2x → repeat
+- All new settings are automatically saved and persist across sessions
+
 ### Version 1.0
 - Initial release
 - Multi-class cooldown tracking
