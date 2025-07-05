@@ -609,6 +609,8 @@ end
 
 -- Update HUD icons with current cooldown status
 function AuraMan:UpdateHUDIcons()
+    if not self.cooldownFrames then return end
+    
     for spellName, frame in pairs(self.cooldownFrames) do
         local spellData = self.trackedSpells[spellName]
         
@@ -678,22 +680,22 @@ function AuraMan:RegisterSlashCommands()
         
         if command == "toggle" then
             AuraManDB.enabled = not AuraManDB.enabled
-            self.enabled = AuraManDB.enabled
+            AuraMan.enabled = AuraManDB.enabled
             if AuraManDB.enabled then
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. AuraManGetText("NOTIFICATIONS_ENABLED"))
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. GetLocalizedText("NOTIFICATIONS_ENABLED"))
             else
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. AuraManGetText("NOTIFICATIONS_DISABLED"))
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. GetLocalizedText("NOTIFICATIONS_DISABLED"))
             end
         elseif command == "reset" then
             AuraManDB.hudX = 0
             AuraManDB.hudY = 0
-            if self.hudFrame then
-                self.hudFrame:ClearAllPoints()
-                self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+            if AuraMan.hudFrame then
+                AuraMan.hudFrame:ClearAllPoints()
+                AuraMan.hudFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
             end
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. AuraManGetText("POSITION_RESET"))
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. GetLocalizedText("POSITION_RESET"))
         elseif command == "list" then
-            self:ListTrackedAbilities()
+            AuraMan:ListTrackedAbilities()
         elseif command == "scale" then
             -- Toggle between scale sizes
             if AuraManDB.hudScale == 1.0 then
@@ -703,25 +705,25 @@ function AuraMan:RegisterSlashCommands()
             else
                 AuraManDB.hudScale = 1.0
             end
-            if self.hudFrame then
-                self.hudFrame:SetScale(AuraManDB.hudScale)
+            if AuraMan.hudFrame then
+                AuraMan.hudFrame:SetScale(AuraManDB.hudScale)
             end
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Scale set to " .. AuraManDB.hudScale)
         elseif command == "hide" then
-            if self.hudFrame and self.hudFrame:IsShown() then
-                self.hudFrame:Hide()
+            if AuraMan.hudFrame and AuraMan.hudFrame:IsShown() then
+                AuraMan.hudFrame:Hide()
                 DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD hidden")
-            elseif self.hudFrame then
-                self.hudFrame:Show()
+            elseif AuraMan.hudFrame then
+                AuraMan.hudFrame:Show()
                 DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD shown")
             else
                 DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r HUD not initialized yet")
             end
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraManGetText("SLASH_HELP") .. "|r")
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraManGetText("SLASH_TOGGLE") .. "|r")
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraManGetText("SLASH_RESET") .. "|r")
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. AuraManGetText("SLASH_LIST") .. "|r")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. GetLocalizedText("SLASH_HELP") .. "|r")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. GetLocalizedText("SLASH_TOGGLE") .. "|r")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. GetLocalizedText("SLASH_RESET") .. "|r")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. GetLocalizedText("SLASH_LIST") .. "|r")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman scale|r - Change HUD scale")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00/auraman hide|r - Toggle HUD visibility")
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00Shift+drag|r - Move HUD")
@@ -733,20 +735,20 @@ end
 function AuraMan:ListTrackedAbilities()
     local _, class = UnitClass("player")
     if not class or not CLASS_ABILITIES[class] then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. AuraManGetText("NO_ABILITIES_FOUND"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. GetLocalizedText("NO_ABILITIES_FOUND"))
         return
     end
     
-    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. AuraManGetText("TRACKED_ABILITIES"))
+    DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r " .. GetLocalizedText("TRACKED_ABILITIES"))
     
-    for spellName, spellData in pairs(self.trackedSpells) do
+    for spellName, spellData in pairs(AuraMan.trackedSpells) do
         DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00✓|r " .. spellName .. " (Priority: " .. spellData.priority .. ")")
     end
     
     -- Show abilities that are available for the class but not learned
     for spellName, spellData in pairs(CLASS_ABILITIES[class]) do
-        if not self.trackedSpells[spellName] then
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000✗|r " .. string.format(AuraManGetText("ABILITY_NOT_LEARNED"), spellName))
+        if not AuraMan.trackedSpells[spellName] then
+            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000✗|r " .. string.format(GetLocalizedText("ABILITY_NOT_LEARNED"), spellName))
         end
     end
 end
@@ -758,6 +760,28 @@ function AuraMan:CountTable(t)
         count = count + 1
     end
     return count
+end
+
+-- Helper function to safely get localized text
+local function GetLocalizedText(key)
+    if AuraManGetText then
+        return AuraManGetText(key)
+    else
+        -- Fallback messages if localization not loaded yet
+        local fallbacks = {
+            ["NOTIFICATIONS_ENABLED"] = "Cooldown notifications enabled",
+            ["NOTIFICATIONS_DISABLED"] = "Cooldown notifications disabled",
+            ["POSITION_RESET"] = "HUD position reset",
+            ["SLASH_HELP"] = "AuraMan Commands:",
+            ["SLASH_TOGGLE"] = "/auraman toggle - Toggle cooldown notifications",
+            ["SLASH_RESET"] = "/auraman reset - Reset HUD position",
+            ["SLASH_LIST"] = "/auraman list - Show tracked abilities",
+            ["NO_ABILITIES_FOUND"] = "No tracked abilities found for your class",
+            ["TRACKED_ABILITIES"] = "Tracked abilities:",
+            ["ABILITY_NOT_LEARNED"] = "Ability not learned: %s",
+        }
+        return fallbacks[key] or key
+    end
 end
 
 -- Initialize the addon
