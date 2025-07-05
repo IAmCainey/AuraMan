@@ -59,7 +59,7 @@ Tracks important cooldowns for all Classic WoW classes:
 | `/auraman` or `/am` | Show help and available commands |
 | `/auraman toggle` | Enable/disable the cooldown tracker |
 | `/auraman reset` | Reset HUD position to center of screen |
-| `/auraman scale` | Cycle through HUD scale sizes (1.0x → 0.8x → 0.5x → 1.2x) |
+| `/auraman scale` | Cycle through HUD scale sizes (1.0x → 0.8x → 0.5x → 1.2x) with smart positioning |
 | `/auraman opacity` | Cycle through background opacity levels (30% → 50% → 70% → 0%) |
 | `/auraman hide` | Toggle HUD visibility |
 | `/auraman list` | List all tracked abilities and learning status |
@@ -67,6 +67,7 @@ Tracks important cooldowns for all Classic WoW classes:
 ### Moving the HUD
 - Hold **Shift** and **left-click drag** the HUD to move it
 - Position is automatically saved when you release the mouse
+- The HUD is automatically kept within screen boundaries
 - Use `/auraman reset` to return to center if needed
 
 ## Configuration
@@ -147,6 +148,13 @@ This addon is designed for Classic WoW 1.12.1. When adding new features or abili
 Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
+
+### Version 1.4
+- **Major Scaling Improvement**: HUD now properly maintains its position when scaling and never goes off-screen
+- **Enhanced Bounds Checking**: HUD is automatically repositioned if it would go outside screen boundaries
+- **Improved Initialization**: Better positioning logic when the addon first loads
+- **Smart Clamping**: When manually moving the HUD, it's automatically kept within screen bounds
+- **Zero Drift Scaling**: Scaling now perfectly preserves intended screen position
 
 ### Version 1.3
 - Fixed HUD position drift when scaling - HUD now maintains its screen position when changing scale sizes

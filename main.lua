@@ -1,5 +1,6 @@
--- AuraMan - Multi-Class Cooldown Tracker
+-- AuraMan - Multi-Class Cooldown Tracker v1.4
 -- Classic WoW Addon for Turtle WoW (1.12.1)
+-- Enhanced scaling with smart bounds checking
 
 local AuraMan = {}
 AuraMan.frame = nil
@@ -484,19 +485,43 @@ function AuraMan:CreateHUDFrame()
     self.hudFrame:SetWidth(300)
     self.hudFrame:SetHeight(200)
     
-    -- Safe positioning
-    local hudX = type(AuraManDB.hudX) == "number" and AuraManDB.hudX or 0
-    local hudY = type(AuraManDB.hudY) == "number" and AuraManDB.hudY or 0
-    self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", hudX, hudY)
-    
-    -- Safe scale setting
+    -- Safe scale setting first
     local scale = AuraManDB.hudScale
     if type(scale) == "number" and scale > 0 and scale <= 3 then
         self.hudFrame:SetScale(scale)
     else
         self.hudFrame:SetScale(1.0)
         AuraManDB.hudScale = 1.0
+        scale = 1.0
     end
+    
+    -- Safe positioning with bounds checking
+    local hudX = type(AuraManDB.hudX) == "number" and AuraManDB.hudX or 0
+    local hudY = type(AuraManDB.hudY) == "number" and AuraManDB.hudY or 0
+    
+    -- Calculate screen bounds considering the current scale
+    local screenWidth = UIParent:GetWidth()
+    local screenHeight = UIParent:GetHeight()
+    local frameWidth = self.hudFrame:GetWidth() * scale
+    local frameHeight = self.hudFrame:GetHeight() * scale
+    local minX = -screenWidth/2 + frameWidth/2
+    local maxX = screenWidth/2 - frameWidth/2
+    local minY = -screenHeight/2 + frameHeight/2
+    local maxY = screenHeight/2 - frameHeight/2
+    
+    -- Clamp position to screen bounds
+    local clampedX = math.max(minX, math.min(maxX, hudX))
+    local clampedY = math.max(minY, math.min(maxY, hudY))
+    
+    -- If the frame would go off-screen, center it
+    if clampedX ~= hudX or clampedY ~= hudY then
+        clampedX = 0
+        clampedY = 0
+        AuraManDB.hudX = 0
+        AuraManDB.hudY = 0
+    end
+    
+    self.hudFrame:SetPoint("CENTER", UIParent, "CENTER", clampedX, clampedY)
     
     -- Make it movable
     self.hudFrame:SetMovable(true)
@@ -511,8 +536,31 @@ function AuraMan:CreateHUDFrame()
         local x, y = this:GetCenter()
         local screenWidth = UIParent:GetWidth()
         local screenHeight = UIParent:GetHeight()
-        AuraManDB.hudX = x - screenWidth/2
-        AuraManDB.hudY = y - screenHeight/2
+        local offsetX = x - screenWidth/2
+        local offsetY = y - screenHeight/2
+        
+        -- Calculate screen bounds considering the current scale
+        local scale = this:GetScale()
+        local frameWidth = this:GetWidth() * scale
+        local frameHeight = this:GetHeight() * scale
+        local minX = -screenWidth/2 + frameWidth/2
+        local maxX = screenWidth/2 - frameWidth/2
+        local minY = -screenHeight/2 + frameHeight/2
+        local maxY = screenHeight/2 - frameHeight/2
+        
+        -- Clamp position to screen bounds
+        local clampedX = math.max(minX, math.min(maxX, offsetX))
+        local clampedY = math.max(minY, math.min(maxY, offsetY))
+        
+        -- If position was adjusted, apply it
+        if clampedX ~= offsetX or clampedY ~= offsetY then
+            this:ClearAllPoints()
+            this:SetPoint("CENTER", UIParent, "CENTER", clampedX, clampedY)
+        end
+        
+        -- Save the clamped position
+        AuraManDB.hudX = clampedX
+        AuraManDB.hudY = clampedY
     end)
     
     -- Background (semi-transparent)
@@ -813,25 +861,47 @@ function AuraMan:RegisterSlashCommands()
                 local x, y = AuraMan.hudFrame:GetCenter()
                 local screenWidth = UIParent:GetWidth()
                 local screenHeight = UIParent:GetHeight()
-                local offsetX = x - screenWidth/2
-                local offsetY = y - screenHeight/2
+                
+                -- Get current scale and calculate unscaled position
+                local currentScale = AuraMan.hudFrame:GetScale()
+                local unscaledX = x - screenWidth/2
+                local unscaledY = y - screenHeight/2
                 
                 -- Apply the new scale
-                local scale = AuraManDB.hudScale
-                if type(scale) == "number" and scale > 0 and scale <= 3 then
-                    AuraMan.hudFrame:SetScale(scale)
+                local newScale = AuraManDB.hudScale
+                if type(newScale) == "number" and newScale > 0 and newScale <= 3 then
+                    AuraMan.hudFrame:SetScale(newScale)
                 else
                     AuraMan.hudFrame:SetScale(1.0)
                     AuraManDB.hudScale = 1.0
+                    newScale = 1.0
+                end
+                
+                -- Calculate screen bounds considering the new scale
+                local frameWidth = AuraMan.hudFrame:GetWidth() * newScale
+                local frameHeight = AuraMan.hudFrame:GetHeight() * newScale
+                local minX = -screenWidth/2 + frameWidth/2
+                local maxX = screenWidth/2 - frameWidth/2
+                local minY = -screenHeight/2 + frameHeight/2
+                local maxY = screenHeight/2 - frameHeight/2
+                
+                -- Clamp position to screen bounds
+                local clampedX = math.max(minX, math.min(maxX, unscaledX))
+                local clampedY = math.max(minY, math.min(maxY, unscaledY))
+                
+                -- If the frame would go off-screen, center it
+                if clampedX ~= unscaledX or clampedY ~= unscaledY then
+                    clampedX = 0
+                    clampedY = 0
                 end
                 
                 -- Restore position after scaling
                 AuraMan.hudFrame:ClearAllPoints()
-                AuraMan.hudFrame:SetPoint("CENTER", UIParent, "CENTER", offsetX, offsetY)
+                AuraMan.hudFrame:SetPoint("CENTER", UIParent, "CENTER", clampedX, clampedY)
                 
                 -- Update saved position
-                AuraManDB.hudX = offsetX
-                AuraManDB.hudY = offsetY
+                AuraManDB.hudX = clampedX
+                AuraManDB.hudY = clampedY
             end
             DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00AuraMan:|r Scale set to " .. AuraManDB.hudScale)
         elseif command == "opacity" then

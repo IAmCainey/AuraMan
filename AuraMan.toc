@@ -2,7 +2,7 @@
 ## Title: AuraMan
 ## Notes: Tracks cooldowns for all class abilities and shows notifications when they're ready
 ## Author: IAmCainey
-## Version: 1.3
+## Version: 1.4
 ## SavedVariables: AuraManDB
 
 localization.lua
