@@ -12,7 +12,7 @@ A comprehensive cooldown tracking addon for Classic World of Warcraft (1.12.1), 
 
 ### 🎮 **Interactive Interface**
 - **Movable HUD**: Hold Shift and drag to reposition anywhere on screen
-- **Scalable**: Toggle between different HUD sizes (0.8x, 1.0x, 1.2x)
+- **Scalable**: Toggle between different HUD sizes (0.5x, 0.8x, 1.0x, 1.2x)
 - **Customizable Layout**: Adjust icon size and icons per row
 - **Hide/Show Toggle**: Quickly hide the HUD when not needed
 
@@ -58,7 +58,7 @@ Tracks important cooldowns for all Classic WoW classes:
 | `/auraman` or `/am` | Show help and available commands |
 | `/auraman toggle` | Enable/disable the cooldown tracker |
 | `/auraman reset` | Reset HUD position to center of screen |
-| `/auraman scale` | Cycle through HUD scale sizes (0.8x → 1.0x → 1.2x) |
+| `/auraman scale` | Cycle through HUD scale sizes (1.0x → 0.8x → 0.5x → 1.2x) |
 | `/auraman hide` | Toggle HUD visibility |
 | `/auraman list` | List all tracked abilities and learning status |
 
@@ -71,7 +71,7 @@ Tracks important cooldowns for all Classic WoW classes:
 
 AuraMan automatically saves your preferences, including:
 - HUD position (X, Y coordinates)
-- HUD scale (0.8x, 1.0x, or 1.2x)
+- HUD scale (0.5x, 0.8x, 1.0x, or 1.2x)
 - Icon size (20-100 pixels)
 - Icons per row (1-10)
 - Enabled/disabled state

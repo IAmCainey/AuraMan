@@ -792,6 +792,8 @@ function AuraMan:RegisterSlashCommands()
             if AuraManDB.hudScale == 1.0 then
                 AuraManDB.hudScale = 0.8
             elseif AuraManDB.hudScale == 0.8 then
+                AuraManDB.hudScale = 0.5
+            elseif AuraManDB.hudScale == 0.5 then
                 AuraManDB.hudScale = 1.2
             else
                 AuraManDB.hudScale = 1.0
