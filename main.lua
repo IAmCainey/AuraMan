@@ -599,7 +599,6 @@ function AuraMan:UpdateTrackedSpells()
     -- Update HUD icons
     self:UpdateHUDIcons()
 end
-end
 
 -- Check cooldowns and update HUD
 function AuraMan:CheckCooldowns()
