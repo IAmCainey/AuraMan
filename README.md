@@ -27,15 +27,15 @@ A comprehensive cooldown tracking addon for Classic World of Warcraft (1.12.1), 
 ### 🏆 **Multi-Class Support**
 Tracks important cooldowns for all Classic WoW classes:
 
-- **Rogue**: Stealth, Vanish, Kidney Shot, Cold Blood, Preparation, Evasion, Sprint, Blind, Thistle Tea
-- **Warrior**: Shield Wall, Last Stand, Bloodthirst, Whirlwind, Intimidating Shout, Recklessness, Retaliation, Challenging Shout
-- **Mage**: Counterspell, Blink, Ice Block, Presence of Mind, Evocation, Combustion, Cold Snap
-- **Priest**: Psychic Scream, Fade, Inner Fire, Power Word: Shield, Fear Ward, Desperate Prayer
-- **Paladin**: Lay on Hands, Divine Protection, Consecration, Hammer of Justice, Divine Favor, Forbearance
-- **Hunter**: Rapid Fire, Deterrence, Freezing Trap, Concussive Shot, Bestial Wrath, Intimidation
-- **Warlock**: Death Coil, Howl of Terror, Shadow Ward, Amplify Curse, Soul Burn, Conflagrate
-- **Druid**: Bash, Frenzied Regeneration, Barkskin, Nature's Swiftness, Innervate, Swiftmend
-- **Shaman**: Earth Elemental Totem, Fire Elemental Totem, Grounding Totem, Nature's Swiftness, Elemental Mastery, Stormstrike
+- **Rogue**: Stealth, Vanish, Kidney Shot, Cold Blood, Preparation, Evasion, Sprint, Blind, Thistle Tea, Kick, Gouge, Distraction
+- **Warrior**: Shield Wall, Last Stand, Bloodthirst, Whirlwind, Intimidating Shout, Recklessness, Retaliation, Challenging Shout, Shield Slam, Thunder Clap, Berserker Rage, Pummel, Overpower
+- **Mage**: Counterspell, Blink, Ice Block, Presence of Mind, Evocation, Combustion, Cold Snap, Frost Nova, Polymorph
+- **Priest**: Psychic Scream, Fade, Inner Fire, Power Word: Shield, Fear Ward, Desperate Prayer, Silence, Mind Control
+- **Paladin**: Lay on Hands, Divine Protection, Consecration, Hammer of Justice, Divine Favor, Forbearance, Blessing of Protection, Turn Undead, Divine Shield
+- **Hunter**: Rapid Fire, Deterrence, Freezing Trap, Concussive Shot, Bestial Wrath, Intimidation, Aimed Shot, Multi-Shot, Wing Clip, Disengage
+- **Warlock**: Death Coil, Howl of Terror, Shadow Ward, Amplify Curse, Soul Burn, Conflagrate, Fear, Banish, Shadowburn
+- **Druid**: Bash, Frenzied Regeneration, Barkskin, Nature's Swiftness, Innervate, Swiftmend, Entangling Roots, Hibernate, Faerie Fire, Bear Form, Cat Form
+- **Shaman**: Earth Elemental Totem, Fire Elemental Totem, Grounding Totem, Nature's Swiftness, Elemental Mastery, Stormstrike, Purge, Ghost Wolf, Wind Shear, Tremor Totem
 
 ## Installation
 
@@ -153,6 +153,18 @@ This addon is designed for Classic WoW 1.12.1. When adding new features or abili
 Free to use and modify. Created for the Classic WoW community.
 
 ## Changelog
+
+### Version 1.6
+- **Expanded Ability Coverage**: Added 30+ missing important abilities across all classes
+- **Rogue Additions**: Kick, Gouge, Distraction for better interrupt and utility tracking
+- **Warrior Additions**: Shield Slam, Thunder Clap, Berserker Rage, Pummel, Overpower for comprehensive combat tracking
+- **Mage Additions**: Frost Nova, Polymorph for enhanced crowd control monitoring
+- **Priest Additions**: Silence, Mind Control for better utility and crowd control tracking
+- **Paladin Additions**: Blessing of Protection, Turn Undead, Divine Shield for complete defensive coverage
+- **Hunter Additions**: Aimed Shot, Multi-Shot, Wing Clip, Disengage for improved combat and utility tracking
+- **Warlock Additions**: Fear, Banish, Shadowburn for enhanced crowd control and damage tracking
+- **Druid Additions**: Entangling Roots, Hibernate, Faerie Fire, Bear Form, Cat Form for comprehensive form and utility tracking
+- **Shaman Additions**: Purge, Ghost Wolf, Wind Shear, Tremor Totem for complete utility and totem coverage
 
 ### Version 1.5
 - **Configuration UI**: Added comprehensive settings panel with visual sliders and options

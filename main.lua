@@ -1,6 +1,6 @@
--- AuraMan - Multi-Class Cooldown Tracker v1.5
+-- AuraMan - Multi-Class Cooldown Tracker v1.6
 -- Classic WoW Addon for Turtle WoW (1.12.1)
--- Enhanced scaling with smart bounds checking and configuration UI
+-- Enhanced scaling with smart bounds checking, configuration UI, and expanded ability coverage
 
 local AuraMan = {}
 AuraMan.frame = nil
@@ -108,6 +108,24 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\INV_Drink_Milk_05",
             priority = 2
         },
+        ["Kick"] = {
+            id = 1766,
+            cooldown = 10,
+            icon = "Interface\\Icons\\Ability_Kick",
+            priority = 4
+        },
+        ["Gouge"] = {
+            id = 1776,
+            cooldown = 10,
+            icon = "Interface\\Icons\\Ability_Gouge",
+            priority = 3
+        },
+        ["Distraction"] = {
+            id = 1725,
+            cooldown = 30,
+            icon = "Interface\\Icons\\Ability_Rogue_Distraction",
+            priority = 2
+        },
     },
     
     ["WARRIOR"] = {
@@ -159,6 +177,36 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\Ability_BullRush",
             priority = 3
         },
+        ["Shield Slam"] = {
+            id = 23922,
+            cooldown = 6,
+            icon = "Interface\\Icons\\INV_Shield_05",
+            priority = 3
+        },
+        ["Thunder Clap"] = {
+            id = 6343,
+            cooldown = 4,
+            icon = "Interface\\Icons\\Spell_Nature_ThunderClap",
+            priority = 2
+        },
+        ["Berserker Rage"] = {
+            id = 18499,
+            cooldown = 30,
+            icon = "Interface\\Icons\\Spell_Nature_AncestralGuardian",
+            priority = 3
+        },
+        ["Pummel"] = {
+            id = 6552,
+            cooldown = 30,
+            icon = "Interface\\Icons\\INV_Gauntlets_04",
+            priority = 4
+        },
+        ["Overpower"] = {
+            id = 7384,
+            cooldown = 5,
+            icon = "Interface\\Icons\\Ability_MeleeDamage",
+            priority = 2
+        },
     },
     
     ["MAGE"] = {
@@ -204,6 +252,18 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\Spell_Frost_WizardMark",
             priority = 3
         },
+        ["Frost Nova"] = {
+            id = 122,
+            cooldown = 25,
+            icon = "Interface\\Icons\\Spell_Frost_FrostNova",
+            priority = 3
+        },
+        ["Polymorph"] = {
+            id = 118,
+            cooldown = 30,
+            icon = "Interface\\Icons\\Spell_Nature_Polymorph",
+            priority = 4
+        },
     },
     
     ["PRIEST"] = {
@@ -242,6 +302,18 @@ local CLASS_ABILITIES = {
             cooldown = 600,
             icon = "Interface\\Icons\\Spell_Holy_Restoration",
             priority = 3
+        },
+        ["Silence"] = {
+            id = 15487,
+            cooldown = 45,
+            icon = "Interface\\Icons\\Spell_Shadow_ImpPhaseShift",
+            priority = 4
+        },
+        ["Mind Control"] = {
+            id = 605,
+            cooldown = 8,
+            icon = "Interface\\Icons\\Spell_Shadow_ShadowWordDominate",
+            priority = 5
         },
     },
     
@@ -282,6 +354,24 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\Spell_Holy_RemoveCurse",
             priority = 2
         },
+        ["Blessing of Protection"] = {
+            id = 1022,
+            cooldown = 300,
+            icon = "Interface\\Icons\\Spell_Holy_SealOfProtection",
+            priority = 4
+        },
+        ["Turn Undead"] = {
+            id = 2878,
+            cooldown = 30,
+            icon = "Interface\\Icons\\Spell_Holy_TurnUndead",
+            priority = 3
+        },
+        ["Divine Shield"] = {
+            id = 642,
+            cooldown = 300,
+            icon = "Interface\\Icons\\Spell_Holy_DivineProtection",
+            priority = 5
+        },
     },
     
     ["HUNTER"] = {
@@ -320,6 +410,30 @@ local CLASS_ABILITIES = {
             cooldown = 60,
             icon = "Interface\\Icons\\Ability_Devour",
             priority = 3
+        },
+        ["Aimed Shot"] = {
+            id = 19434,
+            cooldown = 6,
+            icon = "Interface\\Icons\\INV_Spear_07",
+            priority = 3
+        },
+        ["Multi-Shot"] = {
+            id = 2643,
+            cooldown = 10,
+            icon = "Interface\\Icons\\Ability_UpgradeMoonGlaive",
+            priority = 2
+        },
+        ["Wing Clip"] = {
+            id = 2974,
+            cooldown = 0,
+            icon = "Interface\\Icons\\Ability_Rogue_Trip",
+            priority = 2
+        },
+        ["Disengage"] = {
+            id = 781,
+            cooldown = 5,
+            icon = "Interface\\Icons\\Ability_Rogue_Feint",
+            priority = 2
         },
     },
     
@@ -360,6 +474,24 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\Spell_Fire_Fireball",
             priority = 2
         },
+        ["Fear"] = {
+            id = 5782,
+            cooldown = 30,
+            icon = "Interface\\Icons\\Spell_Shadow_Possession",
+            priority = 4
+        },
+        ["Banish"] = {
+            id = 710,
+            cooldown = 30,
+            icon = "Interface\\Icons\\Spell_Shadow_Cripple",
+            priority = 3
+        },
+        ["Shadowburn"] = {
+            id = 17877,
+            cooldown = 15,
+            icon = "Interface\\Icons\\Spell_Shadow_ScourgeBuild",
+            priority = 3
+        },
     },
     
     ["DRUID"] = {
@@ -399,6 +531,36 @@ local CLASS_ABILITIES = {
             icon = "Interface\\Icons\\INV_Relics_IdolOfRejuvenation",
             priority = 3
         },
+        ["Entangling Roots"] = {
+            id = 339,
+            cooldown = 10,
+            icon = "Interface\\Icons\\Spell_Nature_StrangleVines",
+            priority = 3
+        },
+        ["Hibernate"] = {
+            id = 2637,
+            cooldown = 15,
+            icon = "Interface\\Icons\\Spell_Nature_Sleep",
+            priority = 3
+        },
+        ["Faerie Fire"] = {
+            id = 770,
+            cooldown = 6,
+            icon = "Interface\\Icons\\Spell_Nature_FaerieFire",
+            priority = 2
+        },
+        ["Bear Form"] = {
+            id = 5487,
+            cooldown = 1,
+            icon = "Interface\\Icons\\Ability_Racial_BearForm",
+            priority = 1
+        },
+        ["Cat Form"] = {
+            id = 768,
+            cooldown = 1,
+            icon = "Interface\\Icons\\Ability_Druid_CatForm",
+            priority = 1
+        },
     },
     
     ["SHAMAN"] = {
@@ -437,6 +599,30 @@ local CLASS_ABILITIES = {
             cooldown = 20,
             icon = "Interface\\Icons\\Ability_Shaman_StormStrike",
             priority = 3
+        },
+        ["Purge"] = {
+            id = 370,
+            cooldown = 8,
+            icon = "Interface\\Icons\\Spell_Nature_Purge",
+            priority = 3
+        },
+        ["Ghost Wolf"] = {
+            id = 2645,
+            cooldown = 1,
+            icon = "Interface\\Icons\\Spell_Nature_SpiritWolf",
+            priority = 1
+        },
+        ["Wind Shear"] = {
+            id = 57994,
+            cooldown = 6,
+            icon = "Interface\\Icons\\Spell_Nature_Cyclone",
+            priority = 4
+        },
+        ["Tremor Totem"] = {
+            id = 8143,
+            cooldown = 1,
+            icon = "Interface\\Icons\\Spell_Nature_TremorTotem",
+            priority = 2
         },
     },
 }
